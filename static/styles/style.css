@@ -67,7 +67,8 @@ label {
     flex: 3;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     width: 80%;
     padding: 10px;
     font-size: 1em;
