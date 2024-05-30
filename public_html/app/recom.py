@@ -6,9 +6,10 @@ import pandas as pd
 import pickle
 import os
 
+ROOT_PATH = 'public_html/app/'
 def modelling():
     # Ambil dataset
-    df = pd.read_csv('static/data/cleaned_diets.csv')
+    df = pd.read_csv(f'{ROOT_PATH}static/data/cleaned_diets.csv')
     # Inisiasi TFIDF
     tfidf = TfidfVectorizer()
     
@@ -19,25 +20,25 @@ def modelling():
     tfidfMatrix = tfidf.fit_transform(uniqueVal)
     
     # Simpan model TFIDF
-    with open('models/tfidf_model.pkl', 'wb') as file:
+    with open(f'{ROOT_PATH}models/tfidf_model.pkl', 'wb') as file:
         pickle.dump(tfidf, file)
     
     # Simpan tfidfMatrix untuk digunakan nanti
-    with open('models/tfidf_matrix.pkl', 'wb') as file:
+    with open(f'{ROOT_PATH}models/tfidf_matrix.pkl', 'wb') as file:
         pickle.dump(tfidfMatrix, file)
     
     return df, tfidf, tfidfMatrix
 
 def getRecommendations(formData, n=10):
     # Mengecek apakah model dan matriks TFIDF sudah ada
-    if not (os.path.exists('models/tfidf_model.pkl') and os.path.exists('models/tfidf_matrix.pkl')):
+    if not (os.path.exists(f'{ROOT_PATH}models/tfidf_model.pkl') and os.path.exists(f'{ROOT_PATH}models/tfidf_matrix.pkl')):
         df, tfidf, tfidfMatrix = modelling()
     else:
         # Load tfidf model dan dataset
-        df = pd.read_csv('static/data/cleaned_diets.csv')
-        with open('models/tfidf_model.pkl', 'rb') as file:
+        df = pd.read_csv(f'{ROOT_PATH}static/data/cleaned_diets.csv')
+        with open(f'{ROOT_PATH}models/tfidf_model.pkl', 'rb') as file:
             tfidf = pickle.load(file)
-        with open('models/tfidf_matrix.pkl', 'rb') as file:
+        with open(f'{ROOT_PATH}models/tfidf_matrix.pkl', 'rb') as file:
             tfidfMatrix = pickle.load(file)
     
     # Copy data asli untuk standarisasi
