@@ -13,10 +13,9 @@ body {
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px;
+    position: relative;
+    width: 100%;
 }
 
 .header .logo {
@@ -24,8 +23,10 @@ body {
     color: #333;
 }
 
-.header .nav {
-    font-size: 1em;
+.switch {
+    position: absolute;
+    top: 20px;
+    right: -350px;
 }
 
 .container {
@@ -51,6 +52,7 @@ label {
     float: left;
     margin-right: 650px;
 }
+
 .content {
     display: flex;
     flex-direction: row;
@@ -96,4 +98,26 @@ label {
 .image-container img {
     width: 300px;
     height: auto;
+}
+
+.hidden-fields {
+    display: none;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    margin-bottom: 15px;
+}
+
+input {
+    width: 80%;
+}
+
+#optional-fields {
+    margin-left: 95px;
 }

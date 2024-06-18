@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from recom import getRecommendations
+from recom import getRecommendations, defaultLevel
 
 app = Flask(__name__)
 
@@ -10,6 +10,11 @@ def index():
 @app.route('/submit', methods=['POST'])
 def submit():
     formData = request.form.to_dict()    
+    
+    # Memeriksa apakah nilai protein, carbs, dan fat diisi
+    if formData.get('protein') is None or formData.get('carbs') is None or formData.get('fat') is None:
+        # Menggunakan fungsi defaultLevel untuk mengolah formData lebih lanjut
+        formData = defaultLevel(formData)
     
     processedData = getRecommendations(formData)
     return render_template('result.html', data=processedData)
