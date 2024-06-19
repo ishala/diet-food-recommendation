@@ -5,6 +5,8 @@ import pandas as pd
 import pickle
 import os
 import random
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 def modelling():
     # Ambil dataset
@@ -31,24 +33,27 @@ def modelling():
 def defaultLevel(formData):
     listLevel = [0, 1, 2, 3]
     
-    formData['protein'] = random.choice(listLevel)
-    formData['carbs'] = random.choice(listLevel)
-    formData['fat'] = random.choice(listLevel)
+    if not formData.get('protein'):
+        formData['protein'] = random.choice(listLevel)
+    if not formData.get('carbs'):
+        formData['carbs'] = random.choice(listLevel)
+    if not formData.get('fat'):
+        formData['fat'] = random.choice(listLevel)
     
     return formData
 
+
 def getRecommendations(formData, n=10):
-    # Mengecek apakah model dan matriks TFIDF sudah ada
     if not (os.path.exists('models/tfidf_model.pkl') and os.path.exists('models/tfidf_matrix.pkl')):
         df, tfidf, tfidfMatrix = modelling()
     else:
-        # Load tfidf model dan dataset
         df = pd.read_csv('static/data/cleaned_diets.csv')
         with open('models/tfidf_model.pkl', 'rb') as file:
             tfidf = pickle.load(file)
         with open('models/tfidf_matrix.pkl', 'rb') as file:
             tfidfMatrix = pickle.load(file)
-    
+            
+    logging.debug(f"Input formData: {formData}")
     # Copy data asli untuk standarisasi
     dfCopy = df.copy()
         
@@ -87,4 +92,10 @@ def getRecommendations(formData, n=10):
     topNIndex = sortedScores[:n]
     
     # Mengambil data dari data asli dengan indeks yang didapatkan
-    topNRecomended = df
+    topNRecomended = df.iloc[topNIndex].copy()
+    
+    # Menghapus kolom fitur_tfidf
+    topNRecomended = topNRecomended.drop(['fitur_tfidf', 'segmentasi_kadar_protein', 'segmentasi_kadar_karbo','segmentasi_kadar_lemak'], axis=1)
+    
+    recomendedDict = topNRecomended.to_dict(orient='records')
+    return recomendedDict
