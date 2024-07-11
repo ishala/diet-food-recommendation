@@ -48,7 +48,7 @@
                     </select>
                 </div>
                 <label for="diet-type">Diet Type</label>
-                <select id="diet-type" name="diet-type" required>
+                <select id="diet-type" name="diet-type" onchange="fetchItems()" required>
                     <option value="dash">Dash (Reducing sodium.)</option>
                     <option value="keto">Ketogenic (High fat, low carb.)</option>
                     <option value="mediterranean">Mediterranean (Traditional Mediterranean foods.)</option>
@@ -56,7 +56,9 @@
                     <option value="vegan">Vegan (No animal products)</option>
                 </select>
                 <label for="items">Items</label>
-                <input type="text" id="items" placeholder="Items" name="items"/>
+                <select id="items" name="items" required>
+                    <option value="">Select Item</option>
+                </select>
                 <button type="submit" class="button btn btn-primary">FIND!</button>
             </form>
             <div class="image-container">
@@ -78,6 +80,24 @@
                 optionalFields.classList.add('hidden-fields');
             }
         });
+
+        function fetchItems() {
+            var dietType = document.getElementById('diet-type').value;
+            var itemsDropdown = document.getElementById('items');
+            itemsDropdown.innerHTML = '<option value="">Select Item</option>';
+            
+            fetch(`/get_items?diet_type=${dietType}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        var option = document.createElement('option');
+                        option.value = item;
+                        option.text = item;
+                        itemsDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        }
 
         function handleFormSubmit(event) {
             var toggle = document.getElementById('toggleSwitch');
